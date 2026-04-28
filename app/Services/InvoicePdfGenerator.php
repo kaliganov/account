@@ -56,15 +56,15 @@ class InvoicePdfGenerator
         if (is_string($sum)) {
             // Подстройка координат сумм под ширину строки
             if (strlen($sum) === 9) {
-                $coords['total']['x'] = 141;
-                $coords['total2']['x'] = 167.5;
-                $coords['total3']['x'] = 164.5;
-                $coords['total4']['x'] = 164.5;
-            } elseif (strlen($sum) === 10) {
-                $coords['total']['x'] = 139.5;
-                $coords['total2']['x'] = 166;
+                $coords['total']['x'] = 139;
+                $coords['total2']['x'] = 165.5;
                 $coords['total3']['x'] = 162.5;
                 $coords['total4']['x'] = 162.5;
+            } elseif (strlen($sum) === 10) {
+                $coords['total']['x'] = 137.5;
+                $coords['total2']['x'] = 164;
+                $coords['total3']['x'] = 160.5;
+                $coords['total4']['x'] = 160.5;
             }
         }
 

@@ -39,9 +39,6 @@
                         <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Главная</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('counterparties.index') ? 'active' : '' }}" href="{{ route('counterparties.index') }}">Список контрагентов</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('counterparties.create') ? 'active' : '' }}" href="{{ route('counterparties.create') }}">Создать контрагента</a>
                     </li>
                     <li class="nav-item">

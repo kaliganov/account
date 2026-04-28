@@ -10,7 +10,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
-Route::get('/', [HomeController::class, 'index'])
+Route::get('/', [CounterpartyController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('home');
 
@@ -50,7 +50,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/generate-invoices', [HomeController::class, 'generate'])->name('home.generate');
     Route::get('/download-invoices-archive', [HomeController::class, 'downloadArchive'])->name('home.archive.download');
 
-    Route::get('/counterparties', [CounterpartyController::class, 'index'])->name('counterparties.index');
     Route::get('/counterparties/create', [CounterpartyController::class, 'create'])->name('counterparties.create');
     Route::post('/counterparties', [CounterpartyController::class, 'store'])->middleware('throttle:30,1')->name('counterparties.store');
     Route::get('/counterparties/{counterparty}/edit', [CounterpartyController::class, 'edit'])->name('counterparties.edit');

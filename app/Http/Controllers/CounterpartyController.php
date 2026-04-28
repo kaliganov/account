@@ -10,14 +10,30 @@ use Illuminate\Support\Facades\File;
 
 class CounterpartyController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $now = CarbonImmutable::now();
+        $currentYear = (int) $now->format('Y');
+        $months = [];
+        for ($m = 12; $m >= 1; $m--) {
+            $months[] = [
+                'value' => sprintf('%04d-%02d', $currentYear, $m),
+                'label' => CarbonImmutable::create($currentYear, $m, 1)->locale('ru')->translatedFormat('F Y'),
+            ];
+        }
+
         $counterparties = Counterparty::query()
             ->where('user_id', auth()->id())
             ->orderBy('id')
             ->paginate(100);
 
-        return view('counterparties.index', compact('counterparties'));
+        return view('counterparties.index', [
+            'counterparties' => $counterparties,
+            'months' => $months,
+            'selectedMonth' => old('month', $now->format('Y-m')),
+            'checkNumber' => old('check_number', $request->user()->check_number ?? 1),
+            'archive' => session('archive'),
+        ]);
     }
 
     public function create()
@@ -38,7 +54,7 @@ class CounterpartyController extends Controller
         Counterparty::create($validated);
 
         return redirect()
-            ->route('counterparties.index')
+            ->route('home')
             ->with('status', 'Контрагент добавлен.');
     }
 
@@ -61,7 +77,7 @@ class CounterpartyController extends Controller
         $counterparty->update($validated);
 
         return redirect()
-            ->route('counterparties.index')
+            ->route('home')
             ->with('status', 'Контрагент обновлён.');
     }
 
@@ -72,13 +88,22 @@ class CounterpartyController extends Controller
         $counterparty->delete();
 
         return redirect()
-            ->route('counterparties.index')
+            ->route('home')
             ->with('status', 'Контрагент удалён.');
     }
 
     public function downloadArchive(Request $request)
     {
+        $now = CarbonImmutable::now();
+        $currentYear = (int) $now->format('Y');
+        $allowedMonths = [];
+        for ($m = 12; $m >= 1; $m--) {
+            $allowedMonths[] = sprintf('%04d-%02d', $currentYear, $m);
+        }
+
         $validated = $request->validate([
+            'month' => ['required', 'date_format:Y-m', 'in:'.implode(',', $allowedMonths)],
+            'check_number' => ['required', 'integer', 'min:1'],
             'counterparty_ids' => ['required', 'array', 'min:1'],
             'counterparty_ids.*' => ['required', 'integer', 'distinct'],
         ]);
@@ -94,8 +119,8 @@ class CounterpartyController extends Controller
         abort_if($counterparties->count() !== count($requestedIds), 403);
 
         $user = $request->user();
-        $month = CarbonImmutable::now()->format('Y-m');
-        $startNumber = max(1, (int) ($user->check_number ?? 1));
+        $month = $validated['month'];
+        $startNumber = (int) $validated['check_number'];
         $currentNumber = $startNumber;
 
         $token = bin2hex(random_bytes(8));
