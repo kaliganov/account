@@ -56,6 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/counterparties/{counterparty}/edit', [CounterpartyController::class, 'edit'])->name('counterparties.edit');
     Route::put('/counterparties/{counterparty}', [CounterpartyController::class, 'update'])->middleware('throttle:30,1')->name('counterparties.update');
     Route::delete('/counterparties/{counterparty}', [CounterpartyController::class, 'destroy'])->middleware('throttle:30,1')->name('counterparties.destroy');
+    Route::post('/counterparties/archive-download', [CounterpartyController::class, 'downloadArchive'])->middleware('throttle:10,1')->name('counterparties.archive.download');
 
     Route::get('/counterparties/{counterparty}/invoice.pdf', [InvoicePdfController::class, 'download'])
         ->name('counterparties.invoice_pdf');
