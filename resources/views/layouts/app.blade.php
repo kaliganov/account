@@ -44,6 +44,14 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('counterparties.create') ? 'active' : '' }}" href="{{ route('counterparties.create') }}">Создать контрагента</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}" href="{{ route('profile.show') }}">Профиль</a>
+                    </li>
+                    @if (auth()->user()->is_admin)
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">Админка</a>
+                        </li>
+                    @endif
                 @endauth
             </ul>
 
@@ -66,6 +74,9 @@
 <main class="container py-4">
     @if (session('status'))
         <div class="alert alert-success">{{ session('status') }}</div>
+    @endif
+    @if ($errors->has('status'))
+        <div class="alert alert-danger">{{ $errors->first('status') }}</div>
     @endif
 
     @yield('content')

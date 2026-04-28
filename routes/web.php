@@ -1,10 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CounterpartyController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InvoicePdfController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
@@ -42,6 +44,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->middleware('throttle:5,1')->name('profile.password');
+
     Route::post('/generate-invoices', [HomeController::class, 'generate'])->name('home.generate');
     Route::get('/download-invoices-archive', [HomeController::class, 'downloadArchive'])->name('home.archive.download');
 
@@ -54,4 +59,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/counterparties/{counterparty}/invoice.pdf', [InvoicePdfController::class, 'download'])
         ->name('counterparties.invoice_pdf');
+});
+
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::put('/users/{user}/approval', [AdminUserController::class, 'updateApproval'])->name('users.approval');
+    Route::put('/users/{user}/admin', [AdminUserController::class, 'updateAdmin'])->name('users.admin');
 });

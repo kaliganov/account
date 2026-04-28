@@ -29,6 +29,15 @@ class AuthController extends Controller
                 ->withErrors(['email' => 'Неверный логин или пароль.']);
         }
 
+        $user = $request->user();
+        if (! $user?->is_approved) {
+            Auth::logout();
+
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => 'Аккаунт ожидает подтверждения администратором.']);
+        }
+
         $request->session()->regenerate();
 
         return redirect()->route('home');
@@ -51,13 +60,16 @@ class AuthController extends Controller
             'name' => $attributes['name'],
             'email' => $attributes['email'],
             'password' => Hash::make($attributes['password']),
+            'is_admin' => false,
+            'is_approved' => false,
         ]);
 
-        Auth::login($user);
-        $request->session()->regenerate();
         $user->sendEmailVerificationNotification();
 
-        return redirect()->route('verification.notice');
+        return redirect()->route('login')->with(
+            'status',
+            'Регистрация завершена. Аккаунт ожидает подтверждения администратором.'
+        );
     }
 
     public function destroy(Request $request)
