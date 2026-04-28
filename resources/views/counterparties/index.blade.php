@@ -9,7 +9,7 @@
     <div class="card shadow-sm">
         <div class="table-responsive">
             <table class="table table-striped table-hover mb-0 align-middle">
-                <thead class="table-light">
+                <thead>
                 <tr>
                     <th style="width: 60px;">№</th>
                     <th>Название</th>

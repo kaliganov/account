@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -30,6 +32,32 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         return redirect()->route('home');
+    }
+
+    public function createRegister()
+    {
+        return view('auth.register');
+    }
+
+    public function register(Request $request)
+    {
+        $attributes = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user = User::create([
+            'name' => $attributes['name'],
+            'email' => $attributes['email'],
+            'password' => Hash::make($attributes['password']),
+        ]);
+
+        Auth::login($user);
+        $request->session()->regenerate();
+        $user->sendEmailVerificationNotification();
+
+        return redirect()->route('verification.notice');
     }
 
     public function destroy(Request $request)

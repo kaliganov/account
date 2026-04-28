@@ -3,6 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-bs-theme', savedTheme);
+        })();
+    </script>
 
     @if (file_exists(public_path('favicon.png')))
         <link rel="icon" href="{{ asset('favicon.png') }}" type="image/png">
@@ -10,8 +16,14 @@
 
     <title>{{ $title ?? 'Формирование счетов' }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand me-5" href="{{ route('home') }}">СчетOn</a>
@@ -43,7 +55,9 @@
                     </form>
                 @else
                     <a class="btn btn-outline-light btn-sm" href="{{ route('login') }}">Войти</a>
+                    <a class="btn btn-primary btn-sm" href="{{ route('register') }}">Регистрация</a>
                 @endauth
+                <button class="btn btn-outline-light btn-sm" type="button" id="themeToggle">Темная тема</button>
             </div>
         </div>
     </div>
@@ -58,6 +72,29 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    (function () {
+        const button = document.getElementById('themeToggle');
+        if (!button) {
+            return;
+        }
+
+        const getCurrentTheme = () => document.documentElement.getAttribute('data-bs-theme') || 'light';
+
+        const updateButtonText = () => {
+            button.textContent = getCurrentTheme() === 'dark' ? 'Светлая тема' : 'Темная тема';
+        };
+
+        button.addEventListener('click', function () {
+            const nextTheme = getCurrentTheme() === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-bs-theme', nextTheme);
+            localStorage.setItem('theme', nextTheme);
+            updateButtonText();
+        });
+
+        updateButtonText();
+    })();
+</script>
 </body>
 </html>
 
