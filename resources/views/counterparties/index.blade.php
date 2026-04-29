@@ -111,7 +111,7 @@
                 <div class="d-flex gap-2 flex-wrap">
                     <button class="btn btn-success" type="submit" id="download-selected-archive-btn">Скачать архив выбранных контрагентов</button>
                 </div>
-                <div id="counterparties-warning" class="w-100 text-danger small d-none">
+                <div id="counterparties-warning" class="w-100 text-danger small d-none text-end">
                     Выберите хотя бы одного контрагента для скачивания архива.
                 </div>
                 @error('counterparty_ids')
