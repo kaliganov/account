@@ -109,8 +109,14 @@
             <div class="card-body border-top d-flex justify-content-between align-items-center gap-2 flex-wrap">
                 <span class="text-muted small">Выберите контрагентов для добавления в архив.</span>
                 <div class="d-flex gap-2 flex-wrap">
-                    <button class="btn btn-success" type="submit">Скачать архив выбранных контрагентов</button>
+                    <button class="btn btn-success" type="submit" id="download-selected-archive-btn">Скачать архив выбранных контрагентов</button>
                 </div>
+                <div id="counterparties-warning" class="w-100 text-danger small d-none">
+                    Выберите хотя бы одного контрагента для скачивания архива.
+                </div>
+                @error('counterparty_ids')
+                <div class="w-100 text-danger small text-end">{{ $message }}</div>
+                @enderror
             </div>
         </form>
     </div>
@@ -119,14 +125,21 @@
         (function () {
             const selectAll = document.getElementById('select-all-counterparties');
             const checkboxes = Array.from(document.querySelectorAll('.js-counterparty-checkbox'));
+            const downloadSelectedArchiveBtn = document.getElementById('download-selected-archive-btn');
+            const warning = document.getElementById('counterparties-warning');
             if (!selectAll || checkboxes.length === 0) {
                 return;
             }
+
+            const hasChecked = () => checkboxes.some((item) => item.checked);
 
             const refreshSelectAllState = () => {
                 const checkedCount = checkboxes.filter((item) => item.checked).length;
                 selectAll.checked = checkedCount > 0 && checkedCount === checkboxes.length;
                 selectAll.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
+                if (warning && checkedCount > 0) {
+                    warning.classList.add('d-none');
+                }
             };
 
             selectAll.addEventListener('change', function () {
@@ -139,6 +152,19 @@
             checkboxes.forEach((item) => {
                 item.addEventListener('change', refreshSelectAllState);
             });
+
+            if (downloadSelectedArchiveBtn) {
+                downloadSelectedArchiveBtn.addEventListener('click', function (event) {
+                    if (hasChecked()) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    if (warning) {
+                        warning.classList.remove('d-none');
+                    }
+                });
+            }
 
             refreshSelectAllState();
         })();

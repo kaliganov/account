@@ -15,7 +15,10 @@ class HomeController extends Controller
         $now = CarbonImmutable::now();
         $currentYear = (int) $now->format('Y');
 
-        $months = [];
+        $months = [[
+            'value' => sprintf('%04d-01', $currentYear + 1),
+            'label' => CarbonImmutable::create($currentYear + 1, 1, 1)->locale('ru')->translatedFormat('F Y'),
+        ]];
         for ($m = 12; $m >= 1; $m--) {
             $months[] = [
                 'value' => sprintf('%04d-%02d', $currentYear, $m),
@@ -42,6 +45,7 @@ class HomeController extends Controller
         for ($m = 12; $m >= 1; $m--) {
             $allowedMonths[] = sprintf('%04d-%02d', $currentYear, $m);
         }
+        $allowedMonths[] = sprintf('%04d-01', $currentYear + 1);
 
         $validated = $request->validate([
             'month' => ['required', 'date_format:Y-m', 'in:'.implode(',', $allowedMonths)],
