@@ -52,9 +52,7 @@ class CounterpartyController extends Controller
     public function store(Request $request)
     {
         $validated = $this->validatedData($request);
-        $validated['user_id'] = $request->user()->id;
-
-        Counterparty::create($validated);
+        $request->user()->counterparties()->create($validated);
 
         return redirect()
             ->route('home')
