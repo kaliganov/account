@@ -56,15 +56,13 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        $user = User::create([
+        User::create([
             'name' => $attributes['name'],
             'email' => $attributes['email'],
             'password' => Hash::make($attributes['password']),
             'is_admin' => false,
             'is_approved' => false,
         ]);
-
-        $user->sendEmailVerificationNotification();
 
         return redirect()->route('login')->with(
             'status',

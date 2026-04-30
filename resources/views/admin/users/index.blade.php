@@ -13,7 +13,6 @@
                     <th style="width: 70px;">ID</th>
                     <th>Имя</th>
                     <th>Email</th>
-                    <th>Почта</th>
                     <th>Аккаунт</th>
                     <th>Роль</th>
                     <th class="text-end">Действия</th>
@@ -25,13 +24,6 @@
                         <td>{{ $user->id }}</td>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
-                        <td>
-                            @if ($user->hasVerifiedEmail())
-                                <span class="badge text-bg-success">Подтверждена</span>
-                            @else
-                                <span class="badge text-bg-warning">Не подтверждена</span>
-                            @endif
-                        </td>
                         <td>
                             @if ($user->is_approved)
                                 <span class="badge text-bg-success">Активен</span>
@@ -70,7 +62,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted py-4">Пользователи не найдены</td>
+                        <td colspan="6" class="text-center text-muted py-4">Пользователи не найдены</td>
                     </tr>
                 @endforelse
                 </tbody>

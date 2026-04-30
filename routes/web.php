@@ -7,11 +7,9 @@ use App\Http\Controllers\CounterpartyController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InvoicePdfController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\Request;
 
 Route::get('/', [CounterpartyController::class, 'index'])
-    ->middleware(['auth', 'verified'])
+    ->middleware('auth')
     ->name('home');
 
 Route::middleware('guest')->group(function () {
@@ -26,24 +24,6 @@ Route::post('/logout', [AuthController::class, 'destroy'])
     ->name('logout');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/email/verify', function () {
-        return view('auth.verify-email');
-    })->name('verification.notice');
-
-    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-        $request->fulfill();
-
-        return redirect()->route('home')->with('status', 'Email успешно подтвержден.');
-    })->middleware(['signed', 'throttle:6,1'])->name('verification.verify');
-
-    Route::post('/email/verification-notification', function (Request $request) {
-        $request->user()->sendEmailVerificationNotification();
-
-        return back()->with('status', 'Письмо для подтверждения отправлено повторно.');
-    })->middleware('throttle:6,1')->name('verification.send');
-});
-
-Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->middleware('throttle:5,1')->name('profile.password');
 
@@ -61,7 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('counterparties.invoice_pdf');
 });
 
-Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
     Route::put('/users/{user}/approval', [AdminUserController::class, 'updateApproval'])->name('users.approval');
     Route::put('/users/{user}/admin', [AdminUserController::class, 'updateAdmin'])->name('users.admin');

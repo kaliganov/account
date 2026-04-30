@@ -21,7 +21,7 @@
                         <dd class="col-7">{{ $user->is_approved ? 'Активен' : 'Не активен' }}</dd>
 
                         <dt class="col-5">Почта</dt>
-                        <dd class="col-7">{{ $user->hasVerifiedEmail() ? 'Подтверждена' : 'Не подтверждена' }}</dd>
+                        <dd class="col-7">Подтверждение отключено</dd>
                     </dl>
                 </div>
             </div>
