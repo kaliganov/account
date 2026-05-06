@@ -9,7 +9,7 @@ use App\Http\Controllers\InvoicePdfController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', [CounterpartyController::class, 'index'])
-    ->middleware('auth')
+    ->middleware(['auth', 'approved'])
     ->name('home');
 
 Route::middleware('guest')->group(function () {
@@ -23,7 +23,7 @@ Route::post('/logout', [AuthController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->middleware('throttle:5,1')->name('profile.password');
 
@@ -41,7 +41,7 @@ Route::middleware('auth')->group(function () {
         ->name('counterparties.invoice_pdf');
 });
 
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'approved', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
     Route::put('/users/{user}/approval', [AdminUserController::class, 'updateApproval'])->name('users.approval');
     Route::put('/users/{user}/admin', [AdminUserController::class, 'updateAdmin'])->name('users.admin');
