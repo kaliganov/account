@@ -48,6 +48,11 @@
 
                         <button class="btn btn-primary w-100" type="submit">Войти</button>
                     </form>
+
+                    <div class="text-center mt-3">
+                        <span class="text-muted">Нет аккаунта?</span>
+                        <a href="{{ route('register') }}">Зарегистрироваться</a>
+                    </div>
                 </div>
             </div>
         </div>

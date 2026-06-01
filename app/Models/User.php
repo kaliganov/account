@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -23,6 +22,8 @@ class User extends Authenticatable
         'email',
         'password',
         'check_number',
+        'is_admin',
+        'is_approved',
     ];
 
     /**
@@ -46,6 +47,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'check_number' => 'integer',
+            'is_admin' => 'boolean',
+            'is_approved' => 'boolean',
         ];
     }
 

@@ -41,7 +41,7 @@
 
                 <div class="col-12 d-flex flex-wrap gap-2 mt-5">
                     <button class="btn btn-primary" type="submit">Сформировать счета</button>
-                    <a class="btn btn-outline-secondary" href="{{ route('counterparties.index') }}">Контрагенты</a>
+                    <a class="btn btn-outline-secondary" href="{{ route('home') }}">Контрагенты</a>
 
                     @if ($archive)
                         <a class="btn btn-success" href="{{ route('home.archive.download', ['month' => $archive['month'], 'token' => $archive['token']]) }}">

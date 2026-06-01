@@ -12,7 +12,6 @@ class Counterparty extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'user_id',
         'name',
         'inn',
         'contract_number',

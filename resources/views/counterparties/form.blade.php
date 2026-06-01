@@ -8,7 +8,7 @@
 @section('content')
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h1 class="h4 mb-0">{{ $isEdit ? 'Редактирование контрагента' : 'Создание контрагента' }}</h1>
-        <a class="btn btn-outline-secondary btn-sm" href="{{ route('counterparties.index') }}">К списку</a>
+        <a class="btn btn-outline-secondary btn-sm" href="{{ route('home') }}">К списку</a>
     </div>
 
     <div class="card shadow-sm">
@@ -95,11 +95,11 @@
                     <div class="form-text">Например: 1000.00</div>
                 </div>
 
-                <div class="col-12 d-flex gap-2 mt-5">
-                    <button class="btn btn-primary" type="submit">{{ $isEdit ? 'Сохранить' : 'Создать' }}</button>
-                    <a class="btn btn-outline-secondary" href="{{ route('counterparties.index') }}">Отмена</a>
-                </div>
-            </form>
+                <div class="col-12 d-flex justify-content-between align-items-center gap-2 mt-5">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" type="submit">{{ $isEdit ? 'Сохранить' : 'Создать' }}</button>
+                        <a class="btn btn-outline-secondary" href="{{ route('counterparties.index') }}">Отмена</a>
+                    </div>
 
             @if ($isEdit)
                 <form
