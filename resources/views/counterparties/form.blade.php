@@ -16,6 +16,7 @@
             <form
                 method="post"
                 action="{{ $isEdit ? route('counterparties.update', $counterparty) : route('counterparties.store') }}"
+                id="counterparty-form"
                 class="row g-3"
             >
                 @csrf
@@ -98,11 +99,14 @@
                 <div class="col-12 d-flex justify-content-between align-items-center gap-2 mt-5">
                     <div class="d-flex gap-2">
                         <button class="btn btn-primary" type="submit">{{ $isEdit ? 'Сохранить' : 'Создать' }}</button>
-                        <a class="btn btn-outline-secondary" href="{{ route('counterparties.index') }}">Отмена</a>
+                        <a class="btn btn-outline-secondary" href="{{ route('home') }}">Отмена</a>
                     </div>
+                </div>
+            </form>
 
             @if ($isEdit)
                 <form
+                    id="counterparty-delete-form"
                     method="post"
                     action="{{ route('counterparties.destroy', $counterparty) }}"
                     class="d-flex justify-content-end mt-3"
