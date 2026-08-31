@@ -2,6 +2,20 @@
 
 @section('content')
     <div class="card shadow-sm mb-3">
+        @if ($archive)
+            <div class="card-body border-bottom">
+                <form method="get" action="{{ route('home.archive.download') }}" class="d-flex flex-wrap align-items-center gap-2">
+                    <input type="hidden" name="month" value="{{ $archive['month'] }}">
+                    <input type="hidden" name="token" value="{{ $archive['token'] }}">
+                    <button type="submit" class="btn btn-success">Скачать архив счетов ({{ $archive['count'] }})</button>
+                    <span class="text-muted">
+                        Архив сформирован для {{ substr($archive['month'], 5, 2) }}-{{ substr($archive['month'], 0, 4) }}.
+                        Диапазон номеров: {{ $archive['start'] }} → {{ $archive['next'] - 1 }}.
+                    </span>
+                </form>
+            </div>
+        @endif
+
         <form method="post" action="{{ route('home.generate') }}" id="invoices-form">
             @csrf
             <div class="card-body">
@@ -43,19 +57,8 @@
                     </div>
                     <div class="d-flex gap-2 flex-wrap align-items-end">
                         <button class="btn btn-primary" type="submit" id="generate-invoices-btn">Сформировать счета</button>
-                        @if ($archive)
-                            <a class="btn btn-success" href="{{ route('home.archive.download', ['month' => $archive['month'], 'token' => $archive['token']]) }}">
-                                Скачать архив счетов ({{ $archive['count'] }})
-                            </a>
-                        @endif
                     </div>
                 </div>
-
-                @if ($archive)
-                    <div class="mt-3 text-muted">
-                        Архив сформирован для {{ substr($archive['month'], 5, 2) }}-{{ substr($archive['month'], 0, 4) }}. Диапазон номеров: {{ $archive['start'] }} → {{ $archive['next'] - 1 }}.
-                    </div>
-                @endif
             </div>
 
             <div class="table-responsive">
@@ -162,6 +165,9 @@
 
             if (form) {
                 form.addEventListener('submit', function (event) {
+                    if (event.submitter && event.submitter.id !== 'generate-invoices-btn') {
+                        return;
+                    }
                     const checked = checkboxes.filter((item) => item.checked).length;
                     const count = checked > 0 ? checked : totalAll;
                     const monthLabel = monthSelect && monthSelect.selectedOptions[0]
