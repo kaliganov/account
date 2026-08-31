@@ -29,7 +29,17 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'check_number' => 1,
+            'is_admin' => false,
+            'is_approved' => false,
         ];
+    }
+
+    public function approved(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_approved' => true,
+        ]);
     }
 
     /**

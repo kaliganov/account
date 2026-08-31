@@ -22,8 +22,6 @@ class User extends Authenticatable
         'email',
         'password',
         'check_number',
-        'is_admin',
-        'is_approved',
     ];
 
     /**
@@ -55,5 +53,10 @@ class User extends Authenticatable
     public function counterparties(): HasMany
     {
         return $this->hasMany(Counterparty::class);
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
     }
 }

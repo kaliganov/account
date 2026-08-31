@@ -47,6 +47,8 @@
                         pattern="\d*"
                         value="{{ old('inn', $counterparty->inn) }}"
                         class="form-control @error('inn') is-invalid @enderror"
+                        maxlength="12"
+                        required
                     >
                     @error('inn')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -60,6 +62,7 @@
                         name="contract_number"
                         value="{{ old('contract_number', $counterparty->contract_number) }}"
                         class="form-control @error('contract_number') is-invalid @enderror"
+                        required
                     >
                     @error('contract_number')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -74,6 +77,7 @@
                         name="contract_date"
                         value="{{ old('contract_date', optional($counterparty->contract_date)->format('Y-m-d')) }}"
                         class="form-control @error('contract_date') is-invalid @enderror"
+                        required
                     >
                     @error('contract_date')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -89,6 +93,7 @@
                         placeholder="0.00"
                         value="{{ old('contract_price', $counterparty->contract_price) }}"
                         class="form-control @error('contract_price') is-invalid @enderror"
+                        required
                     >
                     @error('contract_price')
                     <div class="invalid-feedback">{{ $message }}</div>

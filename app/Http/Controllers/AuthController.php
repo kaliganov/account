@@ -32,6 +32,8 @@ class AuthController extends Controller
         $user = $request->user();
         if (! $user?->is_approved) {
             Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
             return back()
                 ->withInput($request->only('email'))
@@ -56,18 +58,22 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        User::create([
+        $isFirst = User::query()->doesntExist();
+
+        $user = User::query()->create([
             'name' => $attributes['name'],
             'email' => $attributes['email'],
             'password' => Hash::make($attributes['password']),
-            'is_admin' => false,
-            'is_approved' => false,
         ]);
+        $user->is_admin = $isFirst;
+        $user->is_approved = $isFirst;
+        $user->save();
 
-        return redirect()->route('login')->with(
-            'status',
-            'Регистрация завершена. Аккаунт ожидает подтверждения администратором.'
-        );
+        $message = $isFirst
+            ? 'Регистрация завершена. Вы первый пользователь — аккаунт уже активен, можно войти.'
+            : 'Регистрация завершена. Аккаунт ожидает подтверждения администратором.';
+
+        return redirect()->route('login')->with('status', $message);
     }
 
     public function destroy(Request $request)

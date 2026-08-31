@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Counterparty;
-use Carbon\CarbonImmutable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use setasign\Fpdi\Tcpdf\Fpdi;
@@ -24,10 +23,10 @@ class InvoicePdfGenerator
             throw new \RuntimeException('Не найден шаблон PDF. Положи файл в storage/app/templates/pechat.pdf');
         }
 
-        $today = CarbonImmutable::now()->locale('ru');
-        $dateStr = $today->translatedFormat('d F Y').' г.';
+        $issuedOn = InvoicePeriod::invoiceDate($month)->locale('ru');
+        $dateStr = $issuedOn->translatedFormat('d F Y').' г.';
 
-        $services = $this->buildServicesText($month);
+        $services = InvoicePeriod::servicesText($month);
 
         $buyerLine1 = trim($counterparty->name.($counterparty->inn ? ', ИНН '.$counterparty->inn : ''));
         $buyerLine2Parts = [];
@@ -52,21 +51,6 @@ class InvoicePdfGenerator
             : null;
 
         $coords = config('invoice_pdf.coords_mm', []);
-
-        if (is_string($sum)) {
-            // Подстройка координат сумм под ширину строки
-            if (strlen($sum) === 9) {
-                $coords['total']['x'] = 139;
-                $coords['total2']['x'] = 165.5;
-                $coords['total3']['x'] = 162.5;
-                $coords['total4']['x'] = 162.5;
-            } elseif (strlen($sum) === 10) {
-                $coords['total']['x'] = 137.5;
-                $coords['total2']['x'] = 164;
-                $coords['total3']['x'] = 160.5;
-                $coords['total4']['x'] = 160.5;
-            }
-        }
 
         $pdf = new Fpdi('P', 'mm', 'A4', true, 'UTF-8', false);
         $pdf->setPrintHeader(false);
@@ -126,6 +110,17 @@ class InvoicePdfGenerator
 
         $pdf->SetFont((string) $family, '', $font);
         $pdf->SetTextColor(0, 0, 0);
+
+        $align = strtoupper((string) ($cfg['align'] ?? 'L'));
+        $width = (float) ($cfg['w'] ?? 0);
+
+        if ($align === 'R' && $width > 0) {
+            $pdf->SetXY($x - $width, $y);
+            $pdf->Cell($width, 0, $text, 0, 0, 'R');
+
+            return;
+        }
+
         $pdf->SetXY($x, $y);
         $pdf->Write(0, $text);
     }
@@ -145,32 +140,6 @@ class InvoicePdfGenerator
         if (is_string($bold) && File::exists($bold)) {
             $this->fontBold = TCPDF_FONTS::addTTFfont($bold, 'TrueTypeUnicode', '', 96);
         }
-    }
-
-    private function buildServicesText(string $month): string
-    {
-        $dt = CarbonImmutable::createFromFormat('Y-m', $month);
-        $monthNum = (int) $dt->format('n');
-        $year = $dt->format('Y');
-
-        $monthsPrep = [
-            1 => 'январе',
-            2 => 'феврале',
-            3 => 'марте',
-            4 => 'апреле',
-            5 => 'мае',
-            6 => 'июне',
-            7 => 'июле',
-            8 => 'августе',
-            9 => 'сентябре',
-            10 => 'октябре',
-            11 => 'ноябре',
-            12 => 'декабре',
-        ];
-
-        $m = $monthsPrep[$monthNum] ?? $dt->locale('ru')->translatedFormat('F');
-
-        return "Бухгалтерское сопровождение в {$m} {$year}г";
     }
 
     private function moneyToWordsRu(string $amount): string
