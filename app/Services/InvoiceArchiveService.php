@@ -46,7 +46,7 @@ class InvoiceArchiveService
 
             try {
                 $number = $startNumber;
-                $issuedOn = InvoicePeriod::invoiceDate($month);
+                $issuedOn = InvoicePeriod::issueDate();
 
                 foreach ($counterparties as $counterparty) {
                     $pdf = $this->generator->generate($counterparty, $month, $number, 1);

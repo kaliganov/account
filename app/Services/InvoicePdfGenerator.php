@@ -23,7 +23,7 @@ class InvoicePdfGenerator
             throw new \RuntimeException('Не найден шаблон PDF. Положи файл в storage/app/templates/pechat.pdf');
         }
 
-        $issuedOn = InvoicePeriod::invoiceDate($month)->locale('ru');
+        $issuedOn = InvoicePeriod::issueDate()->locale('ru');
         $dateStr = $issuedOn->translatedFormat('d F Y').' г.';
 
         $services = InvoicePeriod::servicesText($month);
@@ -31,7 +31,7 @@ class InvoicePdfGenerator
         $buyerLine1 = trim($counterparty->name.($counterparty->inn ? ', ИНН '.$counterparty->inn : ''));
         $buyerLine2Parts = [];
         if ($counterparty->contract_number) {
-            $buyerLine2Parts[] = '№ '.$counterparty->contract_number;
+            $buyerLine2Parts[] = self::contractNumberLabel($counterparty->contract_number);
         }
         if ($counterparty->contract_date) {
             $buyerLine2Parts[] = 'от '.Carbon::parse($counterparty->contract_date)->format('d.m.Y');
@@ -254,6 +254,15 @@ class InvoicePdfGenerator
         $name = trim(preg_replace('/\s+/u', ' ', $name) ?? $name);
         $name = str_replace(' ', '_', $name);
         return $name !== '' ? $name : 'counterparty';
+    }
+
+    private static function contractNumberLabel(string $number): string
+    {
+        $number = trim($number);
+        $number = preg_replace('/^(№|N|No\.?)\s*/iu', '', $number) ?? $number;
+        $number = trim($number);
+
+        return $number === '' ? '№' : '№ '.$number;
     }
 }
 

@@ -61,7 +61,7 @@ class GenerateInvoicesTest extends TestCase
             'counterparty_id' => $counterparty->id,
             'number' => 10,
             'period' => '2026-09',
-            'issued_on' => '2026-09-30',
+            'issued_on' => '2026-08-31',
         ]);
 
         $this->assertSame(11, $user->fresh()->check_number);

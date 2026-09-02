@@ -24,6 +24,7 @@ class InvoicePeriodTest extends TestCase
         $this->assertSame(2026, $parsed->year);
         $this->assertSame(1, $parsed->day);
         $this->assertSame('2026-09-30', InvoicePeriod::invoiceDate('2026-09')->toDateString());
+        $this->assertSame('2026-08-31', InvoicePeriod::issueDate()->toDateString());
         $this->assertStringContainsString('сентябре 2026 г.', InvoicePeriod::servicesText('2026-09'));
         $this->assertStringNotContainsString('октябре', InvoicePeriod::servicesText('2026-09'));
     }

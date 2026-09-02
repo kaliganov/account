@@ -25,6 +25,11 @@ final class InvoicePeriod
         return self::parse($yearMonth)->endOfMonth()->startOfDay();
     }
 
+    public static function issueDate(?CarbonImmutable $now = null): CarbonImmutable
+    {
+        return ($now ?? CarbonImmutable::now())->startOfDay();
+    }
+
     public static function servicesText(string $yearMonth): string
     {
         $dt = self::parse($yearMonth);
